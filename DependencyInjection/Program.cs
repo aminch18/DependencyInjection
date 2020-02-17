@@ -6,8 +6,22 @@ namespace DependencyInjection
     {
         static void Main(string[] args)
         {
-            var soldier = new Soldier(new Gun());
-            soldier.Shoot();
+            //Constructor Injection
+            var soldierOne = new ConstructorSoldier(new Gun());
+            soldierOne.Shoot();
+
+            //Property Injection => We can instance the object and then set the property.
+            var soldierTwo = new PropertySoldier
+            {
+                _weapon = new ShotGun()
+            };
+            soldierTwo.Shoot();
+
+            //Methon Injection
+            var soldierThree = new MethodSoldier();
+            soldierThree.SetDependency(new MachineGun());
+            soldierThree.Shoot();
+
         }
     }
 
@@ -15,6 +29,11 @@ namespace DependencyInjection
     public interface IWeapon
     {
         void Shoot();
+    }
+
+    public interface IWeaponDependency
+    {
+        void SetDependency(IWeapon weapon);
     }
     #endregion
 
@@ -60,11 +79,11 @@ namespace DependencyInjection
     #endregion
 
     #region Classes = Dependencies consumer
-    class Soldier
+    class ConstructorSoldier
     {
         IWeapon _weapon;
 
-        public Soldier(IWeapon weapon)
+        public ConstructorSoldier(IWeapon weapon)
         {
             _weapon = weapon ?? throw new ArgumentNullException();
         }
@@ -72,6 +91,39 @@ namespace DependencyInjection
         public void Shoot()
         {
             _weapon.Shoot();
+        }
+    }
+
+    class PropertySoldier
+    {
+        public IWeapon _weapon { get; set; }
+
+        public PropertySoldier()
+        {
+
+        }
+        public void Shoot()
+        {
+            _weapon.Shoot();
+        }
+    }
+
+    class MethodSoldier : IWeaponDependency
+    {
+        public IWeapon _weapon { get; set; }
+
+        public MethodSoldier()
+        {
+
+        }
+        public void Shoot()
+        {
+            _weapon.Shoot();
+        }
+
+        public void SetDependency(IWeapon weapon)
+        {
+            _weapon = weapon;
         }
     }
     #endregion
