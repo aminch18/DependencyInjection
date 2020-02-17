@@ -6,18 +6,21 @@ namespace DependencyInjection
     {
         static void Main(string[] args)
         {
-            var gun = new Gun();
-            var shotGun = new ShotGun();
-            var machineGun = new MachineGun();
-
-            gun.Shoot();
-            shotGun.Shoot();
-            machineGun.Shoot();
+            var soldier = new Soldier(new Gun());
+            soldier.Shoot();
         }
     }
 
-    #region Classes!
-    public class Gun
+    #region Contracts = Definintion
+    public interface IWeapon
+    {
+        void Shoot();
+    }
+    #endregion
+
+
+    #region Classes = Implementation
+    public class Gun : IWeapon
     {
         public Gun()
         {
@@ -30,7 +33,7 @@ namespace DependencyInjection
         }
     }
 
-    public class MachineGun
+    public class MachineGun : IWeapon
     {
         public MachineGun()
         {
@@ -43,7 +46,7 @@ namespace DependencyInjection
         }
     }
 
-    class ShotGun
+    class ShotGun : IWeapon
     {
         public ShotGun()
         {
@@ -54,6 +57,22 @@ namespace DependencyInjection
             Console.WriteLine("Puuuuuuum!");
         }
     }
+    #endregion
 
+    #region Classes = Dependencies consumer
+    class Soldier
+    {
+        IWeapon _weapon;
+
+        public Soldier(IWeapon weapon)
+        {
+            _weapon = weapon ?? throw new ArgumentNullException();
+        }
+
+        public void Shoot()
+        {
+            _weapon.Shoot();
+        }
+    }
     #endregion
 }
